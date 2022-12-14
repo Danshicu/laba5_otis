@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(BoxCollider))]
 public class Arrow : MonoBehaviour
 {
     public float value;
@@ -18,9 +19,11 @@ public class Arrow : MonoBehaviour
     private Mesh _mesh;
     private Renderer _renderer;
     private Color _color;
+    private BoxCollider collider;
     
     void OnEnable()
     {
+        collider = GetComponent<BoxCollider>(); 
         _mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = _mesh;
         _renderer = GetComponent<Renderer>();
@@ -75,6 +78,8 @@ public class Arrow : MonoBehaviour
 
         _mesh.vertices = verticesList.ToArray();
         _mesh.triangles = trianglesList.ToArray();
+        collider.size = new Vector3(length, tipWidth, 0.1f);
+        collider.center = new Vector3(length / 2, 0f, 0f);
       
         SetColor(_color);
     }

@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 1190649176843078889}
   - component: {fileID: 1190649176843078890}
   - component: {fileID: 1190649176843078891}
-  m_Layer: 0
+  - component: {fileID: 1289459129356203459}
+  m_Layer: 7
   m_Name: Arrow
-  m_TagString: Untagged
+  m_TagString: Arrowtag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,3 +102,16 @@ MonoBehaviour:
   stemWidth: 8
   tipLength: 40
   tipWidth: 20
+--- !u!65 &1289459129356203459
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190649176843078884}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

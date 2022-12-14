@@ -10,20 +10,30 @@ using Vector3 = UnityEngine.Vector3;
 public class EntryPoint : MonoBehaviour
 {
     private Vector2 screenSize;
-    [SerializeField] private Camera mainCamera;
     private float clickCount = 0;
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private Arrow arrowPref;
-    [SerializeField] private SpriteRenderer squarePref;
+    [SerializeField] private Node nodepref;
+    
+    //[SerializeField] private SpriteRenderer squarePref;
+   
     private List<Arrow> arrows;
+    private List<Node> nodes;
+    private Canvas myCanvas;
     public Vector3 firstClickPos;
     public Vector3 secondClickPos;
-    [SerializeField] private Canvas nodeCanvas;
-    [SerializeField] private Canvas arrowCanvas;
-    [SerializeField] private Node _node;
+    [SerializeField] private List<Canvas> canvases;
+    [SerializeField] private float minDistance = 20f;
+    
+    //[SerializeField] private Canvas arrowCanvas;
+    
+    [SerializeField] private LayerMask nodes_mask;
+    [SerializeField] private LayerMask arrows_mask;
     
     
     void Awake()
     {
+        nodes = new List<Node>();
         arrows = new List<Arrow>();
         firstClickPos = new Vector3(0,0, 0);
         secondClickPos = new Vector3(0,0, 0);
@@ -31,6 +41,8 @@ public class EntryPoint : MonoBehaviour
 
     private void Start()
     {
+        // nodes_mask = ~nodes_mask;
+        // arrows_mask = ~arrows_mask;
         screenSize = new Vector2(Screen.width, Screen.height);
     }
 
@@ -40,6 +52,13 @@ public class EntryPoint : MonoBehaviour
         {
             Vector3 MouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector3 SpawnPos = MouseWorldPosition;
+
+            RaycastHit hit;
+            bool attacked = Physics.Raycast(SpawnPos, Vector3.forward, out hit, 200f);
+            Debug.DrawRay(SpawnPos, Vector3.forward * hit.distance, Color.yellow, 10f);
+            Debug.Log(hit.collider);
+            SpawnPos.z = -1f;
+            
             if (MouseWorldPosition.x > screenSize.x / 2)
             {
                 SpawnPos.x -= 350f*0.22f;
@@ -56,11 +75,27 @@ public class EntryPoint : MonoBehaviour
             {
                 SpawnPos.y += 145f*0.22f;
             }
-            SpawnPos.z = 0;
-            Instantiate(nodeCanvas, SpawnPos, Quaternion.identity);
-            Debug.Log(screenSize);
-            Debug.Log(SpawnPos);
-            Debug.Log(MouseWorldPosition);
+
+            if (attacked)
+            {
+                if (hit.collider.gameObject.CompareTag("Nodetag"))
+                {
+                    myCanvas = canvases[0];
+                    attacked = false;
+                    Instantiate(myCanvas, SpawnPos, Quaternion.identity);
+                }
+
+                if (hit.collider.gameObject.CompareTag("Arrowtag"))
+                {
+                    myCanvas = canvases[1];
+                    attacked = false;
+                    Instantiate(myCanvas, SpawnPos, Quaternion.identity);
+                }
+            }
+
+            // Debug.Log(screenSize);
+            // Debug.Log(SpawnPos);
+            // Debug.Log(MouseWorldPosition);
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -78,15 +113,16 @@ public class EntryPoint : MonoBehaviour
 
             if (clickCount == 2)
             {
-                if (firstClickPos == secondClickPos)
+                float distance = Vector3.Distance(secondClickPos, firstClickPos);
+                if (distance<minDistance)
                 {
-                    Debug.Log($"squarePosition: {secondClickPos}");
-                    var square = Instantiate(squarePref, MouseWorldPosition, Quaternion.identity);
-                    var node = Instantiate(_node, MouseWorldPosition, Quaternion.identity);
-                    node.DrawCircle(100, 3, MouseWorldPosition);
+                    Debug.Log($"nodePosition: {secondClickPos}");
+                    var node = Instantiate(nodepref, MouseWorldPosition, Quaternion.identity);
+                    nodes.Add(node);
+                    //node.DrawCircle(100,  MouseWorldPosition);
                 }
                 clickCount = 0;
-                if (secondClickPos != firstClickPos)
+                if (distance>minDistance)
                 {
                     Vector3 angleVector = new Vector3((secondClickPos.x - firstClickPos.x),
                         (secondClickPos.y - firstClickPos.y), 0f);
@@ -97,13 +133,14 @@ public class EntryPoint : MonoBehaviour
                         angle *= -1;
                     }
                     
-                    Debug.Log($"angle: {angle}");
-                    Debug.Log($"length: {length}");
-                    Debug.Log($"firstClickPos: {firstClickPos}");
-                    Debug.Log($"secondClickPos: {secondClickPos}");
+                    // Debug.Log($"angle: {angle}");
+                    // Debug.Log($"length: {length}");
+                    // Debug.Log($"firstClickPos: {firstClickPos}");
+                    // Debug.Log($"secondClickPos: {secondClickPos}");
                     var arrow = Instantiate(arrowPref, firstClickPos, Quaternion.identity);
                     arrow.GenerateArrow(length, Vector3.zero);
                     arrow.transform.Rotate(Vector3.forward*angle, Space.Self);
+                    arrows.Add(arrow);
                 }
                 firstClickPos = secondClickPos = Vector3.zero;
             } 
