@@ -1,42 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Mime;
 using UnityEngine;
-//[RequireComponent(typeof(CircleCollider2D))]
+using UnityEngine.UI;
+
 public class Node : MonoBehaviour
 {
-    private Transform _transform;
-    public float _radius=20f;
-    //private LineRenderer circleRenderer;
+    public float radius=30f;
+    public string name = "Node name";
+    public NameChecker nameCanvasText;
 
-    private CapsuleCollider collider;
-    // Start is called before the first frame update
+    private CapsuleCollider _collider;
+    
     void Awake()
     {
-        _transform = GetComponent<Transform>();
-        collider = GetComponent<CapsuleCollider>();
-        //circleRenderer = GetComponent<LineRenderer>();
+        _collider = GetComponent<CapsuleCollider>();
     }
     
-    void Update()
+    public void SetName(string name)
     {
-       // _transform.
+        this.name = name;
+        nameCanvasText.TextUpdate(name);
     }
 
-    /*public void DrawCircle(int steps, Vector3 position)
+    public void AddRadius(float value)
     {
-        circleRenderer.positionCount = steps;
-        for (int currentStep = 0; currentStep < steps; currentStep++)
-        {
-            float circumferenceProgress = (float)currentStep / steps;
-            float currentRadian = circumferenceProgress * 2 * Mathf.PI;
+        this.radius += value;
+        this.SetScale();
+    }
 
-            float x = _radius * Mathf.Cos(currentRadian) + position.x;
-            float y = _radius * Mathf.Sin(currentRadian) + position.y;
+    private void SetScale()
+    {
+        this.GetComponent<Transform>().localScale = new Vector3(radius, radius, 0.1f);
+    }
+    
+    
+    
+    
 
-            Vector3 currentPosition = new Vector3(x, y, 0);
-            circleRenderer.SetPosition(currentStep, currentPosition);
-        }
-
-        collider.radius = _radius;
-    }*/
 }

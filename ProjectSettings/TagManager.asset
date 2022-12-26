@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Nodetag
   - Arrowtag
+  - UI
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - UI
   - MyNode
   - MyArrow
-  - 
+  - MyObject
   - 
   - 
   - 
