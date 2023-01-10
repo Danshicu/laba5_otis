@@ -228,9 +228,25 @@ public class EntryPoint : MonoBehaviour
 
     public void SaveAll(string FilePath)
     {
+        int NodeCount = 0;
+        int ArrowCount = 0;
         using (BinaryWriter writer = new BinaryWriter(File.Open(FilePath, FileMode.OpenOrCreate)))
         {
-        writer.Write(_arrows.Count);
+            foreach (var arrow in _arrows)
+            {
+                if (arrow.gameObject.activeInHierarchy)
+                {
+                    ArrowCount++;
+                }
+            }
+            foreach (var node in _nodes)
+            {
+                if (node.gameObject.activeInHierarchy)
+                {
+                    NodeCount++;
+                }
+            }
+        writer.Write(ArrowCount);
         foreach (var arrow in _arrows)
             {
                 if (arrow.gameObject.activeInHierarchy)
@@ -238,7 +254,6 @@ public class EntryPoint : MonoBehaviour
                     writer.Write(arrow.transform.position.x);
                     writer.Write(arrow.transform.position.y);
                     writer.Write(arrow.transform.rotation.eulerAngles.z);
-                    Debug.Log(arrow.transform.rotation.eulerAngles.z);
                     writer.Write(arrow.stemLength);
                     writer.Write(arrow.tipLength);
                     writer.Write(arrow.stemWidth);
@@ -246,13 +261,16 @@ public class EntryPoint : MonoBehaviour
                     writer.Write(arrow.value);
                 }
             }
-        writer.Write(_nodes.Count);
+        writer.Write(NodeCount);
         foreach (var node in _nodes)
         {
-            writer.Write(node.transform.position.x);
-            writer.Write(node.transform.position.y);
-            writer.Write(node.name);
-            writer.Write(node.radius);
+            if (node.gameObject.activeInHierarchy)
+            {
+                writer.Write(node.transform.position.x);
+                writer.Write(node.transform.position.y);
+                writer.Write(node.name);
+                writer.Write(node.radius);
+            }
         }
         writer.Close();
         }
